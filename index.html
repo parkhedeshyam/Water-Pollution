@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EVS Interactive Notes – All Chapters</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f8f9fa;--card:#fff;--text:#1a1a2e;--muted:#6c757d;
+  --blue:#2563eb;--green:#16a34a;--amber:#d97706;--red:#dc2626;
+  --purple:#7c3aed;--teal:#0891b2;--pink:#db2777;--orange:#ea580c;
+  --border:#e2e8f0;--shadow:0 2px 12px rgba(0,0,0,.08);
+  --radius:12px;--success-bg:#dcfce7;--success:#166534;
+  --danger-bg:#fee2e2;--danger:#991b1b;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* HEADER */
+.header{background:linear-gradient(135deg,#1e3a8a 0%,#7c3aed 100%);color:#fff;padding:1.5rem 2rem;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 4px 20px rgba(0,0,0,.2)}
+.header h1{font-size:1.6rem;font-weight:700;letter-spacing:-.5px}
+.header p{font-size:.85rem;opacity:.8;margin-top:4px}
+
+/* NAV TABS */
+.nav{display:flex;gap:8px;padding:1rem 1.5rem;overflow-x:auto;background:#fff;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.nav-tab{padding:8px 16px;border-radius:20px;border:1.5px solid var(--border);font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .25s;background:#fff;color:var(--muted)}
+.nav-tab:hover{border-color:var(--blue);color:var(--blue)}
+.nav-tab.active{background:var(--blue);color:#fff;border-color:var(--blue);box-shadow:0 2px 8px rgba(37,99,235,.35)}
+
+/* CONTENT */
+.content{max-width:960px;margin:0 auto;padding:1.5rem}
+.chapter{display:none;animation:fadeIn .35s ease}
+.chapter.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* CHAPTER HERO */
+.ch-hero{border-radius:var(--radius);padding:1.5rem;margin-bottom:1.5rem;color:#fff;position:relative;overflow:hidden}
+.ch-hero h2{font-size:1.4rem;font-weight:700}
+.ch-hero p{font-size:.9rem;opacity:.9;margin-top:6px;max-width:600px}
+.ch-hero .emoji-bg{position:absolute;right:1rem;top:50%;transform:translateY(-50%);font-size:5rem;opacity:.15}
+
+/* SECTION LABELS */
+.sec-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:1.5rem 0 .75rem;display:flex;align-items:center;gap:8px}
+.sec-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* CARDS GRID */
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:1.5rem}
+.card{background:var(--card);border:1.5px solid var(--border);border-radius:var(--radius);padding:16px;cursor:pointer;transition:all .2s;text-align:center}
+.card:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:var(--blue)}
+.card.selected{border-color:var(--blue);background:#eff6ff}
+.card .icon{font-size:2rem;margin-bottom:8px}
+.card .title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
+.card .desc{font-size:11px;color:var(--muted);line-height:1.5}
+
+/* INFO BOX */
+.info-box{display:none;background:linear-gradient(135deg,#eff6ff,#f0fdf4);border-left:4px solid var(--blue);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1rem;font-size:13px;line-height:1.7;color:var(--text);animation:fadeIn .3s ease}
+
+/* DIAGRAM BOX */
+.diagram-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;margin-bottom:1.5rem;overflow:hidden}
+.diagram-box svg{display:block}
+
+/* ANIMATION CONTROL */
+.anim-ctrl{display:flex;align-items:center;gap:10px;margin-bottom:.75rem;font-size:12px;color:var(--muted)}
+.anim-btn{padding:5px 12px;border-radius:20px;border:1px solid var(--border);font-size:12px;cursor:pointer;background:#fff;transition:all .2s}
+.anim-btn:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
+.anim-btn.playing{background:var(--blue);color:#fff;border-color:var(--blue)}
+
+/* Q&A */
+.qa-list{display:flex;flex-direction:column;gap:8px;margin-bottom:1.5rem}
+.qa-item{border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--card)}
+.qa-q{padding:12px 16px;font-size:13px;font-weight:500;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:background .2s}
+.qa-q:hover{background:#f8fafc}
+.qa-a{display:none;padding:12px 16px;font-size:13px;color:var(--muted);background:#f8fafc;border-top:1px solid var(--border);line-height:1.6}
+.qa-a.open{display:block;animation:fadeIn .2s ease}
+.chev{transition:transform .25s;color:var(--muted);font-size:18px}
+.chev.open{transform:rotate(180deg)}
+
+/* MCQ */
+.mcq-wrap{margin-bottom:1.5rem}
+.score-bar{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--card);border-radius:10px;border:1px solid var(--border);margin-bottom:1rem;font-size:13px;color:var(--muted)}
+.score-val{font-size:1.4rem;font-weight:700;color:var(--blue)}
+.progress-track{flex:1;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.progress-fill{height:100%;background:var(--blue);border-radius:3px;transition:width .4s ease}
+.mcq-item{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:10px}
+.mcq-q{font-size:13px;font-weight:600;color:var(--text);margin-bottom:12px;line-height:1.5}
+.mcq-opts{display:flex;flex-direction:column;gap:8px}
+.mcq-opt{padding:10px 14px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;cursor:pointer;transition:all .18s;background:#fff;text-align:left;display:flex;align-items:center;gap:10px}
+.mcq-opt:hover:not(:disabled){background:#eff6ff;border-color:var(--blue);color:var(--blue)}
+.mcq-opt.correct{background:var(--success-bg);border-color:#16a34a;color:var(--success)}
+.mcq-opt.wrong{background:var(--danger-bg);border-color:#dc2626;color:var(--danger)}
+.opt-letter{width:24px;height:24px;border-radius:50%;background:var(--border);font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.mcq-opt.correct .opt-letter{background:#16a34a;color:#fff}
+.mcq-opt.wrong .opt-letter{background:#dc2626;color:#fff}
+.mcq-opt:hover:not(:disabled) .opt-letter{background:var(--blue);color:#fff}
+
+/* STEPPER */
+.stepper{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1.5rem}
+.step-dots{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap}
+.step-dot{width:10px;height:10px;border-radius:50%;background:var(--border);cursor:pointer;transition:all .2s}
+.step-dot.active{background:var(--blue);transform:scale(1.3)}
+.step-dot.done{background:var(--green)}
+.step-panel{display:none;animation:fadeIn .3s ease}
+.step-panel.active{display:block}
+.step-title{font-size:14px;font-weight:700;margin-bottom:6px}
+.step-body{font-size:13px;color:var(--muted);line-height:1.7}
+.step-nav{display:flex;gap:8px;margin-top:12px}
+.step-btn{padding:7px 18px;border-radius:20px;border:1.5px solid var(--blue);font-size:13px;cursor:pointer;transition:all .2s;background:#fff;color:var(--blue)}
+.step-btn:hover{background:var(--blue);color:#fff}
+.step-btn.primary{background:var(--blue);color:#fff}
+
+/* COMPARE TABLE */
+.compare-table{width:100%;border-collapse:collapse;margin-bottom:1.5rem;font-size:13px}
+.compare-table th{background:var(--blue);color:#fff;padding:10px 14px;text-align:left;font-weight:600}
+.compare-table td{padding:9px 14px;border-bottom:1px solid var(--border);background:var(--card)}
+.compare-table tr:hover td{background:#eff6ff}
+.compare-table tr:nth-child(even) td{background:#f8fafc}
+.compare-table tr:nth-child(even):hover td{background:#eff6ff}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600}
+.badge-green{background:#dcfce7;color:#166534}
+.badge-red{background:#fee2e2;color:#991b1b}
+.badge-blue{background:#dbeafe;color:#1e40af}
+.badge-amber{background:#fef3c7;color:#92400e}
+
+/* FACT BOX */
+.fact-box{background:linear-gradient(135deg,#fef3c7,#fde68a);border-radius:var(--radius);padding:1rem 1.25rem;margin-bottom:1rem;font-size:13px;color:#78350f;line-height:1.6;border-left:4px solid var(--amber)}
+.fact-box strong{font-weight:700}
+
+/* KEYWORD BADGES */
+.keywords{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:1.5rem}
+.kw{padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;border:1.5px solid transparent}
+
+/* PROCESS FLOW */
+.flow{display:flex;gap:0;flex-wrap:wrap;margin-bottom:1.5rem;align-items:center}
+.flow-step{flex:1;min-width:100px;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:12px;text-align:center;position:relative;transition:all .2s;cursor:default}
+.flow-step:hover{transform:scale(1.04);border-color:var(--blue);box-shadow:var(--shadow)}
+.flow-step .num{width:24px;height:24px;border-radius:50%;background:var(--blue);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 6px}
+.flow-step .fs-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:3px}
+.flow-step .fs-sub{font-size:11px;color:var(--muted)}
+.flow-arrow{color:var(--blue);font-size:1.4rem;padding:0 4px;flex-shrink:0}
+
+/* ANIMATIONS for SVG */
+@keyframes flowAnim{to{stroke-dashoffset:-40}}
+@keyframes rainDrop{0%{transform:translateY(-8px);opacity:0}50%{opacity:1}100%{transform:translateY(8px);opacity:0}}
+@keyframes rise{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes pulse{0%,100%{opacity:.6}50%{opacity:1}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes rotate{to{transform:rotate(360deg)}}
+@keyframes wave{0%{d:path("M0,30 Q170,0 340,30 Q510,60 680,30")}50%{d:path("M0,30 Q170,60 340,30 Q510,0 680,30")}100%{d:path("M0,30 Q170,0 340,30 Q510,60 680,30")}}
+@keyframes shimmer{0%,100%{opacity:.5}50%{opacity:1}}
+.rain-animated{animation:rainDrop 1.2s ease-in-out infinite}
+.flow-animated{animation:flowAnim 2s linear infinite}
+.float-animated{animation:float 3s ease-in-out infinite}
+.pulse-animated{animation:pulse 2s ease-in-out infinite}
+.paused *{animation-play-state:paused!important}
+
+/* MATCH GAME */
+.match-game{margin-bottom:1.5rem}
+.match-cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.match-col h4{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.match-item{padding:10px 14px;border-radius:8px;border:1.5px solid var(--border);font-size:13px;cursor:pointer;background:var(--card);transition:all .2s;margin-bottom:6px;user-select:none}
+.match-item:hover{border-color:var(--blue);background:#eff6ff}
+.match-item.selected{border-color:var(--blue);background:#dbeafe;color:var(--blue)}
+.match-item.matched{border-color:var(--green);background:var(--success-bg);color:var(--success);cursor:default}
+.match-item.wrong-flash{animation:wrongFlash .4s ease}
+@keyframes wrongFlash{0%,100%{background:var(--card)}50%{background:var(--danger-bg);border-color:var(--red)}}
+.match-result{font-size:13px;color:var(--green);font-weight:600;margin-top:8px;min-height:20px}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  .content{padding:1rem}
+  .cards{grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}
+  .header h1{font-size:1.2rem}
+  .flow{flex-direction:column}
+  .flow-arrow{transform:rotate(90deg)}
+  .match-cols{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🌿 EVS Interactive Notes</h1>
+  <p>Chapters 14 · 18 · 19 · 20 — All topics covered with animations, diagrams & quizzes</p>
+</div>
+
+<div class="nav">
+  <button class="nav-tab active" onclick="showCh('ch14',this)">🏠 Ch 14 – Types of Houses</button>
+  <button class="nav-tab" onclick="showCh('ch18',this)">💧 Ch 18 – Water Sources</button>
+  <button class="nav-tab" onclick="showCh('ch19',this)">⚠️ Ch 19 – Water Pollution</button>
+  <button class="nav-tab" onclick="showCh('ch20',this)">🐘 Ch 20 – Animals for Transport</button>
+</div>
+
+<div class="content">
+
+<!-- ═══════════════════════════════════════════════
+     CHAPTER 14 — TYPES OF HOUSES
+═══════════════════════════════════════════════ -->
+<div class="chapter active" id="ch14">
+  <div class="ch-hero" style="background:linear-gradient(135deg,#1e3a8a,#2563eb)">
+    <h2>Chapter 14: Types of Houses</h2>
+    <p>Houses protect us from rain, heat, cold, wind, wild animals, and thieves. Different types are found in villages and cities.</p>
+    <div class="emoji-bg">🏠</div>
+  </div>
+
+  <div class="fact-box"><strong>📌 Key fact:</strong> A house is a place where people live with their families. In India, houses range from ancient havelis to modern multi-storey towers!</div>
+
+  <div class="sec-label">Types of Houses — click each to explore</div>
+  <div class="cards">
+    <div class="card" onclick="showHouseInfo('haveli')"><div class="icon">🏯</div><div class="title">Haveli</div><div class="desc">Large old house • High ceilings • Many rooms</div></div>
+    <div class="card" onclick="showHouseInfo('kachcha')"><div class="icon">🛖</div><div class="title">Kachcha House</div><div class="desc">Mud & straw • Thatched roof • Needs yearly repair</div></div>
+    <div class="card" onclick="showHouseInfo('pucca')"><div class="icon">🧱</div><div class="title">Pucca House</div><div class="desc">Bricks & cement • Strong • Lasts long</div></div>
+    <div class="card" onclick="showHouseInfo('multistorey')"><div class="icon">🏢</div><div class="title">Multi-storey</div><div class="desc">Many floors • Flats • Common in cities</div></div>
+    <div class="card" onclick="showHouseInfo('slum')"><div class="icon">🏚️</div><div class="title">Slum</div><div class="desc">Tin & plastic • Unhygienic • No clean water</div></div>
+    <div class="card" onclick="showHouseInfo('bungalow')"><div class="icon">🏡</div><div class="title">Bungalow</div><div class="desc">Independent house • Garden • One family</div></div>
+  </div>
+  <div class="info-box" id="house-info"></div>
+
+  <div class="sec-label">Animated House Comparison</div>
+  <div class="diagram-box">
+    <div class="anim-ctrl">
+      <button class="anim-btn playing" id="ch14-anim-btn" onclick="toggleAnim('ch14-diagram','ch14-anim-btn')">⏸ Pause</button>
+      <span>Hover over each house to highlight it</span>
+    </div>
+    <svg id="ch14-diagram" width="100%" viewBox="0 0 680 270" role="img">
+      <title>House types animated comparison</title>
+      <defs>
+        <marker id="arr14" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+        <!-- Rain effect -->
+        <pattern id="rain-pat" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+          <line x1="10" y1="0" x2="7" y2="12" stroke="#93c5fd" stroke-width="1.2" stroke-linecap="round" opacity=".6"/>
+        </pattern>
+      </defs>
+
+      <!-- Background sky -->
+      <rect x="0" y="0" width="680" height="200" rx="8" fill="#eff6ff"/>
+      <!-- Ground -->
+      <rect x="0" y="200" width="680" height="70" fill="#d1fae5" rx="0"/>
+      <!-- Animated rain cloud over kachcha -->
+      <g class="float-animated">
+        <ellipse cx="110" cy="35" rx="45" ry="22" fill="#94a3b8" opacity=".7"/>
+        <ellipse cx="85" cy="42" rx="28" ry="18" fill="#94a3b8" opacity=".65"/>
+        <ellipse cx="138" cy="43" rx="25" ry="16" fill="#94a3b8" opacity=".65"/>
+      </g>
+      <!-- Rain drops -->
+      <g class="rain-animated" style="animation-delay:0s"><line x1="82" y1="62" x2="78" y2="76" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/></g>
+      <g class="rain-animated" style="animation-delay:.2s"><line x1="100" y1="63" x2="96" y2="77" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/></g>
+      <g class="rain-animated" style="animation-delay:.4s"><line x1="118" y1="62" x2="114" y2="76" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/></g>
+      <g class="rain-animated" style="animation-delay:.1s"><line x1="136" y1="63" x2="132" y2="77" stroke="#3b82f6" stroke-width="1.5" stroke-linecap="round"/></g>
+
+      <!-- KACHCHA HOUSE -->
+      <g>
+        <rect x="40" y="130" width="140" height="70" rx="3" fill="#d9f99d" stroke="#65a30d" stroke-width="1"/>
+        <polygon points="110,75 40,130 180,130" fill="#ca8a04" stroke="#92400e" stroke-width="1"/>
+        <!-- Thatched texture lines -->
+        <line x1="58" y1="128" x2="110" y2="82" stroke="#78350f" stroke-width="1" opacity=".5" class="pulse-animated"/>
+        <line x1="78" y1="128" x2="110" y2="82" stroke="#78350f" stroke-width="1" opacity=".5" class="pulse-animated" style="animation-delay:.3s"/>
+        <line x1="98" y1="128" x2="110" y2="82" stroke="#78350f" stroke-width="1" opacity=".5" class="pulse-animated" style="animation-delay:.6s"/>
+        <line x1="122" y1="128" x2="110" y2="82" stroke="#78350f" stroke-width="1" opacity=".5" class="pulse-animated" style="animation-delay:.2s"/>
+        <line x1="145" y1="128" x2="110" y2="82" stroke="#78350f" stroke-width="1" opacity=".5" class="pulse-animated" style="animation-delay:.5s"/>
+        <line x1="165" y1="128" x2="110" y2="82" stroke="#78350f" stroke-width="1" opacity=".5" class="pulse-animated" style="animation-delay:.4s"/>
+        <!-- Door -->
+        <rect x="90" y="162" width="40" height="38" rx="3" fill="#86efac" stroke="#15803d" stroke-width=".8"/>
+        <!-- Window -->
+        <rect x="48" y="148" width="28" height="24" rx="2" fill="#bfdbfe" stroke="#2563eb" stroke-width=".8"/>
+        <line x1="62" y1="148" x2="62" y2="172" stroke="#2563eb" stroke-width=".5"/>
+        <line x1="48" y1="160" x2="76" y2="160" stroke="#2563eb" stroke-width=".5"/>
+        <!-- "Water dripping" animation on rainy days -->
+        <g class="rain-animated" style="animation-delay:.7s"><circle cx="110" cy="135" r="2" fill="#60a5fa" opacity=".8"/></g>
+        <text x="110" y="222" text-anchor="middle" font-size="12" font-family="sans-serif" font-weight="600" fill="#78350f">Kachcha House</text>
+        <text x="110" y="237" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#92400e">Mud · Straw · Thatched roof</text>
+        <text x="110" y="252" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#dc2626">Needs yearly repair ⚠</text>
+      </g>
+
+      <!-- PUCCA HOUSE -->
+      <g>
+        <rect x="270" y="125" width="140" height="75" rx="4" fill="#bfdbfe" stroke="#1d4ed8" stroke-width="1"/>
+        <polygon points="340,72 270,125 410,125" fill="#2563eb" stroke="#1d4ed8" stroke-width="1"/>
+        <!-- Windows -->
+        <rect x="280" y="148" width="30" height="26" rx="2" fill="#e0f2fe" stroke="#0284c7" stroke-width=".8"/>
+        <line x1="295" y1="148" x2="295" y2="174" stroke="#0284c7" stroke-width=".5"/>
+        <line x1="280" y1="161" x2="310" y2="161" stroke="#0284c7" stroke-width=".5"/>
+        <rect x="360" y="148" width="30" height="26" rx="2" fill="#e0f2fe" stroke="#0284c7" stroke-width=".8"/>
+        <line x1="375" y1="148" x2="375" y2="174" stroke="#0284c7" stroke-width=".5"/>
+        <line x1="360" y1="161" x2="390" y2="161" stroke="#0284c7" stroke-width=".5"/>
+        <!-- Door -->
+        <rect x="315" y="157" width="50" height="43" rx="3" fill="#93c5fd" stroke="#1d4ed8" stroke-width=".8"/>
+        <!-- Brick texture hint -->
+        <line x1="270" y1="145" x2="410" y2="145" stroke="#1d4ed8" stroke-width=".4" opacity=".3"/>
+        <line x1="270" y1="160" x2="410" y2="160" stroke="#1d4ed8" stroke-width=".4" opacity=".3"/>
+        <line x1="270" y1="175" x2="410" y2="175" stroke="#1d4ed8" stroke-width=".4" opacity=".3"/>
+        <line x1="270" y1="190" x2="410" y2="190" stroke="#1d4ed8" stroke-width=".4" opacity=".3"/>
+        <text x="340" y="222" text-anchor="middle" font-size="12" font-family="sans-serif" font-weight="600" fill="#1d4ed8">Pucca House</text>
+        <text x="340" y="237" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#1e40af">Bricks · Cement · Steel</text>
+        <text x="340" y="252" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#16a34a">Strong &amp; durable ✓</text>
+      </g>
+
+      <!-- MULTI-STOREY -->
+      <g>
+        <rect x="510" y="50" width="140" height="150" rx="4" fill="#f3e8ff" stroke="#7c3aed" stroke-width="1"/>
+        <!-- Floor lines -->
+        <line x1="510" y1="100" x2="650" y2="100" stroke="#7c3aed" stroke-width=".5" opacity=".4"/>
+        <line x1="510" y1="150" x2="650" y2="150" stroke="#7c3aed" stroke-width=".5" opacity=".4"/>
+        <!-- Window grid - floor 1 -->
+        <rect x="523" y="60" width="22" height="16" rx="2" fill="#ddd6fe" stroke="#7c3aed" stroke-width=".6"/>
+        <rect x="555" y="60" width="22" height="16" rx="2" fill="#ddd6fe" stroke="#7c3aed" stroke-width=".6"/>
+        <rect x="587" y="60" width="22" height="16" rx="2" fill="#ddd6fe" stroke="#7c3aed" stroke-width=".6"/>
+        <rect x="619" y="60" width="22" height="16" rx="2" fill="#ddd6fe" stroke="#7c3aed" stroke-width=".6" class="pulse-animated"/>
+        <!-- Window grid - floor 2 -->
+        <rect x="523" y="110" width="22" height="16" rx="2" fill="#ddd6fe" stroke="#7c3aed" stroke-width=".6" class="pulse-animated" style="animation-delay:.5s"/>
+        <rect x="555" y="110" width="22" height="16" rx="2" fill="#ede9fe" stroke="#7c3aed" stroke-width=".6"/>
+        <rect x="587" y="110" width="22" height="16" rx="2" fill="#ddd6fe" stroke="#7c3aed" stroke-width=".6"/>
+        <rect x="619" y="110" width="22" height="16" rx="2" fill="#ddd6fe" stroke="#7c3aed" stroke-width=".6" class="pulse-animated" style="animation-delay:.3s"/>
+        <!-- Window grid - floor 3 -->
+        <rect x="523" y="160" width="22" height="16" rx="2" fill="#ddd6fe" stroke="#7c3aed" stroke-width=".6"/>
+        <rect x="555" y="160" width="22" height="16" rx="2" fill="#ddd6fe" stroke="#7c3aed" stroke-width=".6" class="pulse-animated" style="animation-delay:.8s"/>
+        <rect x="587" y="160" width="22" height="16" rx="2" fill="#ede9fe" stroke="#7c3aed" stroke-width=".6"/>
+        <rect x="619" y="160" width="22" height="16" rx="2" fill="#ddd6fe" stroke="#7c3aed" stroke-width=".6"/>
+        <!-- Door -->
+        <rect x="555" y="175" width="40" height="25" rx="2" fill="#c4b5fd" stroke="#7c3aed" stroke-width=".8"/>
+        <text x="580" y="222" text-anchor="middle" font-size="12" font-family="sans-serif" font-weight="600" fill="#7c3aed">Multi-storey</text>
+        <text x="580" y="237" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#6d28d9">Many floors · Many flats</text>
+        <text x="580" y="252" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#16a34a">Found in cities ✓</text>
+      </g>
+
+      <!-- Arrows -->
+      <line x1="196" y1="160" x2="258" y2="160" stroke="#6b7280" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arr14)"/>
+      <text x="227" y="150" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#6b7280">stronger</text>
+      <line x1="422" y1="150" x2="498" y2="110" stroke="#6b7280" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arr14)"/>
+      <text x="460" y="118" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#6b7280">taller</text>
+    </svg>
+  </div>
+
+  <div class="sec-label">Comparison Table</div>
+  <div style="overflow-x:auto;margin-bottom:1.5rem">
+  <table class="compare-table">
+    <thead><tr><th>House Type</th><th>Materials</th><th>Location</th><th>Durability</th><th>Cost</th></tr></thead>
+    <tbody>
+      <tr><td>🏯 Haveli</td><td>Stone, wood</td><td>Rajasthan, cities</td><td><span class="badge badge-green">High</span></td><td><span class="badge badge-amber">High</span></td></tr>
+      <tr><td>🛖 Kachcha</td><td>Mud, straw, bamboo</td><td>Villages</td><td><span class="badge badge-red">Low</span></td><td><span class="badge badge-green">Low</span></td></tr>
+      <tr><td>🧱 Pucca</td><td>Bricks, cement, steel</td><td>Villages & cities</td><td><span class="badge badge-green">Very high</span></td><td><span class="badge badge-amber">Medium-high</span></td></tr>
+      <tr><td>🏢 Multi-storey</td><td>Bricks, cement, steel, glass</td><td>Cities</td><td><span class="badge badge-green">Very high</span></td><td><span class="badge badge-red">Very high</span></td></tr>
+      <tr><td>🏚️ Slum</td><td>Plastic, tin sheets</td><td>City outskirts</td><td><span class="badge badge-red">Very low</span></td><td><span class="badge badge-green">Very low</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="sec-label">Key Terms</div>
+  <div class="keywords" id="kw14"></div>
+
+  <div class="sec-label">Q&A — Tap to reveal answers</div>
+  <div class="qa-list" id="qa14"></div>
+
+  <div class="sec-label">MCQ Practice Quiz</div>
+  <div class="mcq-wrap">
+    <div class="score-bar">
+      Score: <span class="score-val" id="sv14">0</span>/<span id="st14">0</span>
+      <div class="progress-track"><div class="progress-fill" id="pf14" style="width:0%"></div></div>
+    </div>
+    <div id="mcq14"></div>
+  </div>
+
+  <div class="sec-label">Match the Columns</div>
+  <div class="match-game">
+    <div class="match-cols">
+      <div><h4>House Type</h4><div id="match14-left"></div></div>
+      <div><h4>Description</h4><div id="match14-right"></div></div>
+    </div>
+    <div class="match-result" id="match14-result"></div>
+    <button class="step-btn" onclick="resetMatch('match14')" style="margin-top:8px">↺ Reset</button>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     CHAPTER 18 — WATER SOURCES
+═══════════════════════════════════════════════ -->
+<div class="chapter" id="ch18">
+  <div class="ch-hero" style="background:linear-gradient(135deg,#0369a1,#06b6d4)">
+    <h2>Chapter 18: Water Sources</h2>
+    <p>Earth is the Blue Planet — about two-thirds of it is covered with water. We get water from rain, rivers, lakes, groundwater, and oceans.</p>
+    <div class="emoji-bg">💧</div>
+  </div>
+
+  <div class="fact-box"><strong>🌍 Did you know?</strong> Earth is the only planet that has water in liquid form. Water covers about 71% of Earth's surface — that's why astronauts call it the Blue Planet!</div>
+
+  <div class="sec-label">Animated Water Cycle</div>
+  <div class="diagram-box">
+    <div class="anim-ctrl">
+      <button class="anim-btn playing" id="ch18-anim-btn" onclick="toggleAnim('ch18-diagram','ch18-anim-btn')">⏸ Pause</button>
+      <span>Watch rain, evaporation &amp; river flow live</span>
+    </div>
+    <svg id="ch18-diagram" width="100%" viewBox="0 0 680 300" role="img">
+      <title>Animated water cycle diagram</title>
+      <defs>
+        <marker id="arr18" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+        <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#bae6fd" stop-opacity=".6"/>
+          <stop offset="100%" stop-color="#e0f2fe" stop-opacity=".2"/>
+        </linearGradient>
+        <linearGradient id="groundGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#bbf7d0"/>
+          <stop offset="100%" stop-color="#86efac" stop-opacity=".5"/>
+        </linearGradient>
+        <linearGradient id="waterGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#38bdf8"/>
+          <stop offset="100%" stop-color="#0284c7" stop-opacity=".8"/>
+        </linearGradient>
+      </defs>
+
+      <!-- Sky -->
+      <rect x="0" y="0" width="680" height="205" fill="url(#skyGrad)" rx="8"/>
+      <!-- Ground -->
+      <rect x="0" y="205" width="680" height="95" fill="url(#groundGrad)"/>
+      <!-- Underground layer -->
+      <rect x="0" y="255" width="680" height="45" fill="#bae6fd" fill-opacity=".35"/>
+      <text x="340" y="275" text-anchor="middle" font-size="11" font-family="sans-serif" fill="#0369a1" font-weight="600">🌊 Groundwater / Underground Water</text>
+      <!-- Seep arrows -->
+      <line x1="300" y1="230" x2="300" y2="253" stroke="#0369a1" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arr18)" opacity=".6"/>
+      <line x1="420" y1="230" x2="420" y2="253" stroke="#0369a1" stroke-width="1" stroke-dasharray="3 3" marker-end="url(#arr18)" opacity=".6"/>
+      <text x="360" y="246" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#0369a1" opacity=".7">seeps underground</text>
+
+      <!-- MOUNTAIN with snow -->
+      <polygon points="140,205 220,80 300,205" fill="#94a3b8" stroke="#64748b" stroke-width="1"/>
+      <polygon points="165,205 220,100 275,205" fill="#cbd5e1" fill-opacity=".5"/>
+      <polygon points="198,100 220,80 242,100 228,118 212,118" fill="white" fill-opacity=".9"/>
+      <text x="220" y="73" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#475569" font-weight="600">Glacier / Snow</text>
+      <text x="220" y="195" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#475569">Mountain</text>
+
+      <!-- River flowing animated -->
+      <path d="M280,205 Q370,215 460,205 Q530,198 590,205" fill="none" stroke="#0284c7" stroke-width="6" stroke-linecap="round" stroke-dasharray="12 6" opacity=".7" class="flow-animated"/>
+      <path d="M280,205 Q370,215 460,205 Q530,198 590,205" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" opacity=".5"/>
+      <text x="435" y="222" text-anchor="middle" font-size="11" font-family="sans-serif" fill="#0369a1" font-weight="600">🌊 River</text>
+
+      <!-- CLOUD with animation -->
+      <g class="float-animated">
+        <ellipse cx="470" cy="60" rx="60" ry="28" fill="white" fill-opacity=".9" stroke="#bae6fd" stroke-width="1"/>
+        <ellipse cx="438" cy="68" rx="38" ry="24" fill="white" fill-opacity=".85"/>
+        <ellipse cx="508" cy="69" rx="32" ry="22" fill="white" fill-opacity=".85"/>
+        <text x="470" y="65" text-anchor="middle" font-size="11" font-family="sans-serif" fill="#0369a1" font-weight="600">☁ Cloud</text>
+      </g>
+
+      <!-- Rain drops (animated) -->
+      <g class="rain-animated" style="animation-delay:0s"><line x1="445" y1="96" x2="440" y2="114" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/></g>
+      <g class="rain-animated" style="animation-delay:.2s"><line x1="462" y1="97" x2="457" y2="115" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/></g>
+      <g class="rain-animated" style="animation-delay:.4s"><line x1="479" y1="96" x2="474" y2="114" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/></g>
+      <g class="rain-animated" style="animation-delay:.15s"><line x1="496" y1="97" x2="491" y2="115" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/></g>
+      <g class="rain-animated" style="animation-delay:.35s"><line x1="513" y1="96" x2="508" y2="114" stroke="#3b82f6" stroke-width="2" stroke-linecap="round"/></g>
+      <text x="480" y="135" text-anchor="middle" font-size="11" font-family="sans-serif" fill="#1d4ed8" font-weight="600">🌧 Rain</text>
+
+      <!-- Evaporation arrow UP -->
+      <path d="M600,205 Q625,155 605,95" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#arr18)" opacity=".8" class="pulse-animated"/>
+      <text x="640" y="155" text-anchor="start" font-size="10" font-family="sans-serif" fill="#b91c1c">Evaporation</text>
+      <text x="640" y="168" text-anchor="start" font-size="10" font-family="sans-serif" fill="#b91c1c">(heat → vapour)</text>
+
+      <!-- Condensation label -->
+      <text x="58" y="52" font-size="10" font-family="sans-serif" fill="#7c3aed" font-weight="600">Condensation</text>
+      <text x="58" y="65" font-size="10" font-family="sans-serif" fill="#7c3aed">(vapour → water)</text>
+      <path d="M108,70 Q140,90 185,110" fill="none" stroke="#7c3aed" stroke-width="1" stroke-dasharray="4 3" marker-end="url(#arr18)" opacity=".7"/>
+
+      <!-- Well -->
+      <rect x="358" y="218" width="24" height="22" rx="3" fill="#d1fae5" stroke="#059669" stroke-width="1"/>
+      <rect x="354" y="215" width="32" height="5" rx="2" fill="#059669"/>
+      <text x="370" y="252" text-anchor="middle" font-size="9" font-family="sans-serif" fill="#065f46">Well</text>
+
+      <!-- Ocean label -->
+      <text x="78" y="222" font-size="11" font-family="sans-serif" fill="#0369a1" font-weight="600">Dam stores →</text>
+    </svg>
+  </div>
+
+  <div class="sec-label">Sources of Water — Step-by-step explorer</div>
+  <div class="stepper" id="stepper18"></div>
+
+  <div class="sec-label">Water Sources Cards</div>
+  <div class="cards">
+    <div class="card"><div class="icon">🌧️</div><div class="title">Rain</div><div class="desc">Main source of freshwater. Differs by season & location.</div></div>
+    <div class="card"><div class="icon">🪣</div><div class="title">Groundwater</div><div class="desc">Rain seeps underground. Drawn via wells & handpumps.</div></div>
+    <div class="card"><div class="icon">🔵</div><div class="title">Pond</div><div class="desc">Small water body surrounded by land. May dry in summer.</div></div>
+    <div class="card"><div class="icon">🏞️</div><div class="title">Lake</div><div class="desc">Larger than a pond. Surrounded by land on all sides.</div></div>
+    <div class="card"><div class="icon">🌊</div><div class="title">River</div><div class="desc">Natural flow across land. Starts from glaciers or springs.</div></div>
+    <div class="card"><div class="icon">🌍</div><div class="title">Ocean / Sea</div><div class="desc">5 oceans on Earth. Salty water — cannot drink directly.</div></div>
+    <div class="card"><div class="icon">🏗️</div><div class="title">Dam</div><div class="desc">Wall across river. Stores water & generates electricity.</div></div>
+    <div class="card"><div class="icon">🏞️</div><div class="title">Reservoir</div><div class="desc">Artificial lake behind a dam. Stores blocked river water.</div></div>
+    <div class="card"><div class="icon">〰️</div><div class="title">Canal</div><div class="desc">Channel carrying water from river/reservoir to fields.</div></div>
+    <div class="card"><div class="icon">🔥</div><div class="title">Evaporation</div><div class="desc">Water → water vapour due to heat from the sun.</div></div>
+    <div class="card"><div class="icon">❄️</div><div class="title">Condensation</div><div class="desc">Water vapour → water due to cooling.</div></div>
+    <div class="card"><div class="icon">🧊</div><div class="title">Glacier</div><div class="desc">Large rivers of ice in mountains. Source of snow-fed rivers.</div></div>
+  </div>
+
+  <div class="fact-box"><strong>🇮🇳 India's Rivers:</strong> Snow-fed rivers (Ganga, Yamuna, Brahmaputra) — source in Himalayas, have water year-round. Rain-fed rivers (Godavari, Krishna, Kaveri, Mahanadi) — source in Deccan plateau, dry up in summer.</div>
+
+  <div class="sec-label">Q&A — Tap to reveal</div>
+  <div class="qa-list" id="qa18"></div>
+
+  <div class="sec-label">MCQ Practice Quiz</div>
+  <div class="mcq-wrap">
+    <div class="score-bar">Score: <span class="score-val" id="sv18">0</span>/<span id="st18">0</span>
+      <div class="progress-track"><div class="progress-fill" id="pf18" style="width:0%"></div></div>
+    </div>
+    <div id="mcq18"></div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     CHAPTER 19 — WATER POLLUTION
+═══════════════════════════════════════════════ -->
+<div class="chapter" id="ch19">
+  <div class="ch-hero" style="background:linear-gradient(135deg,#991b1b,#dc2626)">
+    <h2>Chapter 19: Water Pollution</h2>
+    <p>Water pollution means making water dirty and unsafe. Polluted water harms people, animals, and plants. Water is precious — protect it!</p>
+    <div class="emoji-bg">⚠️</div>
+  </div>
+
+  <div class="fact-box"><strong>⚠️ Alarming fact:</strong> Due to high levels of water pollution, aquatic animals face a greater threat of extinction than land animals!</div>
+
+  <div class="sec-label">Animated Pollution Diagram</div>
+  <div class="diagram-box">
+    <div class="anim-ctrl">
+      <button class="anim-btn playing" id="ch19-anim-btn" onclick="toggleAnim('ch19-diagram','ch19-anim-btn')">⏸ Pause</button>
+      <span>Watch pollution flow into the river</span>
+    </div>
+    <svg id="ch19-diagram" width="100%" viewBox="0 0 680 290" role="img">
+      <title>Water pollution causes and effects diagram</title>
+      <defs>
+        <marker id="arr19" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+      </defs>
+
+      <!-- Central river -->
+      <rect x="270" y="95" width="140" height="110" rx="12" fill="#fca5a5" fill-opacity=".25" stroke="#dc2626" stroke-width="1.5"/>
+      <path d="M270,150 Q310,138 340,150 Q370,162 410,150" fill="none" stroke="#dc2626" stroke-width="3" stroke-dasharray="8 4" opacity=".6" class="flow-animated"/>
+      <text x="340" y="140" text-anchor="middle" font-size="13" font-family="sans-serif" font-weight="700" fill="#991b1b">POLLUTED</text>
+      <text x="340" y="158" text-anchor="middle" font-size="13" font-family="sans-serif" font-weight="700" fill="#991b1b">WATER 🚫</text>
+      <text x="340" y="176" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#dc2626">☠ Unsafe for use</text>
+
+      <!-- CAUSES (left side) -->
+      <!-- Cause 1 -->
+      <rect x="10" y="18" width="190" height="34" rx="7" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
+      <text x="105" y="39" text-anchor="middle" font-size="12" font-family="sans-serif" fill="#78350f">🧼 Bathing / washing in rivers</text>
+      <path d="M200,35 Q240,75 268,120" fill="none" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arr19)" opacity=".7" class="pulse-animated" style="animation-delay:0s"/>
+
+      <!-- Cause 2 -->
+      <rect x="10" y="68" width="190" height="34" rx="7" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
+      <text x="105" y="89" text-anchor="middle" font-size="12" font-family="sans-serif" fill="#78350f">🗑 Dumping household waste</text>
+      <path d="M200,85 Q238,105 268,135" fill="none" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arr19)" opacity=".7" class="pulse-animated" style="animation-delay:.3s"/>
+
+      <!-- Cause 3 -->
+      <rect x="10" y="118" width="190" height="34" rx="7" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
+      <text x="105" y="139" text-anchor="middle" font-size="12" font-family="sans-serif" fill="#78350f">🏭 Factory chemical waste</text>
+      <line x1="200" y1="135" x2="268" y2="150" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arr19)" opacity=".7" class="pulse-animated" style="animation-delay:.5s"/>
+
+      <!-- Cause 4 -->
+      <rect x="10" y="168" width="190" height="34" rx="7" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
+      <text x="105" y="189" text-anchor="middle" font-size="12" font-family="sans-serif" fill="#78350f">🚽 Untreated sewage</text>
+      <path d="M200,185 Q235,183 268,168" fill="none" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arr19)" opacity=".7" class="pulse-animated" style="animation-delay:.2s"/>
+
+      <!-- Cause 5 -->
+      <rect x="10" y="218" width="190" height="34" rx="7" fill="#fef3c7" stroke="#d97706" stroke-width="1"/>
+      <text x="105" y="239" text-anchor="middle" font-size="12" font-family="sans-serif" fill="#78350f">🛢 Oil spills at sea</text>
+      <path d="M200,235 Q238,220 268,190" fill="none" stroke="#f59e0b" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arr19)" opacity=".7" class="pulse-animated" style="animation-delay:.4s"/>
+
+      <!-- EFFECTS (right side) -->
+      <rect x="418" y="18" width="255" height="34" rx="7" fill="#fee2e2" stroke="#ef4444" stroke-width="1"/>
+      <text x="546" y="39" text-anchor="middle" font-size="12" font-family="sans-serif" fill="#7f1d1d">🤒 Cholera, dysentery, diarrhoea</text>
+      <path d="M412,120 Q415,70 416,52" fill="none" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arr19)" opacity=".7" class="pulse-animated" style="animation-delay:.1s"/>
+
+      <rect x="418" y="68" width="255" height="34" rx="7" fill="#fee2e2" stroke="#ef4444" stroke-width="1"/>
+      <text x="546" y="89" text-anchor="middle" font-size="12" font-family="sans-serif" fill="#7f1d1d">🐟 Kills fish &amp; aquatic animals</text>
+      <path d="M412,135 Q414,115 416,102" fill="none" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arr19)" opacity=".7" class="pulse-animated" style="animation-delay:.35s"/>
+
+      <rect x="418" y="118" width="255" height="34" rx="7" fill="#fee2e2" stroke="#ef4444" stroke-width="1"/>
+      <text x="546" y="139" text-anchor="middle" font-size="12" font-family="sans-serif" fill="#7f1d1d">🚱 Water unfit for drinking</text>
+      <line x1="412" y1="150" x2="416" y2="150" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arr19)" opacity=".7"/>
+
+      <rect x="418" y="168" width="255" height="34" rx="7" fill="#fee2e2" stroke="#ef4444" stroke-width="1"/>
+      <text x="546" y="189" text-anchor="middle" font-size="12" font-family="sans-serif" fill="#7f1d1d">💀 Harms marine life (oil spills)</text>
+      <path d="M412,165 Q413,190 416,195" fill="none" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arr19)" opacity=".7" class="pulse-animated" style="animation-delay:.25s"/>
+
+      <rect x="418" y="218" width="255" height="34" rx="7" fill="#fee2e2" stroke="#ef4444" stroke-width="1"/>
+      <text x="546" y="239" text-anchor="middle" font-size="12" font-family="sans-serif" fill="#7f1d1d">🌱 Groundwater contamination</text>
+      <path d="M412,180 Q414,215 416,232" fill="none" stroke="#ef4444" stroke-width="1.2" stroke-dasharray="5 3" marker-end="url(#arr19)" opacity=".7" class="pulse-animated" style="animation-delay:.45s"/>
+
+      <!-- Labels -->
+      <text x="105" y="278" text-anchor="middle" font-size="12" font-family="sans-serif" fill="#d97706" font-weight="700">← CAUSES</text>
+      <text x="546" y="278" text-anchor="middle" font-size="12" font-family="sans-serif" fill="#dc2626" font-weight="700">EFFECTS →</text>
+    </svg>
+  </div>
+
+  <div class="sec-label">Water Purification — Step by Step</div>
+  <div class="flow" id="flow19"></div>
+
+  <div class="sec-label">Keeping Water Clean — Tips</div>
+  <div class="cards">
+    <div class="card"><div class="icon">🫙</div><div class="title">Cover drinking water</div><div class="desc">Always cover vessels to prevent dust & insects falling in.</div></div>
+    <div class="card"><div class="icon">🔥</div><div class="title">Boil water</div><div class="desc">Boiling kills germs and makes water safe to drink.</div></div>
+    <div class="card"><div class="icon">🔍</div><div class="title">Use purifiers</div><div class="desc">Water purifiers filter out germs and impurities effectively.</div></div>
+    <div class="card"><div class="icon">🥄</div><div class="title">Use a long-handled cup</div><div class="desc">Prevents fingers from touching stored drinking water.</div></div>
+    <div class="card"><div class="icon">❌</div><div class="title">Don't dump waste</div><div class="desc">Never dump garbage or waste into rivers, ponds, or lakes.</div></div>
+    <div class="card"><div class="icon">🚜</div><div class="title">Reduce pesticides</div><div class="desc">Excessive farm chemicals seep into rivers and groundwater.</div></div>
+  </div>
+
+  <div class="fact-box"><strong>📖 True Story — Plachimada, Kerala:</strong> Villagers discovered water levels dropped drastically. A soft-drink company was drawing millions of litres of underground water. They protested, went to court, and won! The factory was shut down — a great example of fighting for water rights.</div>
+
+  <div class="sec-label">Q&A</div>
+  <div class="qa-list" id="qa19"></div>
+
+  <div class="sec-label">MCQ Practice Quiz</div>
+  <div class="mcq-wrap">
+    <div class="score-bar">Score: <span class="score-val" id="sv19">0</span>/<span id="st19">0</span>
+      <div class="progress-track"><div class="progress-fill" id="pf19" style="width:0%"></div></div>
+    </div>
+    <div id="mcq19"></div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     CHAPTER 20 — ANIMALS FOR TRANSPORT
+═══════════════════════════════════════════════ -->
+<div class="chapter" id="ch20">
+  <div class="ch-hero" style="background:linear-gradient(135deg,#064e3b,#059669)">
+    <h2>Chapter 20: Animals for Transport</h2>
+    <p>Ever since humans learnt to domesticate animals, they've been used for riding, pulling loads, and carrying goods across terrains.</p>
+    <div class="emoji-bg">🐘</div>
+  </div>
+
+  <div class="fact-box"><strong>📜 History:</strong> In ancient times, kings used horses for chariots and elephants in battles. The bullock cart is one of India's oldest means of transport!</div>
+
+  <div class="sec-label">Animals & their terrains — Animated Map</div>
+  <div class="diagram-box">
+    <div class="anim-ctrl">
+      <button class="anim-btn playing" id="ch20-anim-btn" onclick="toggleAnim('ch20-diagram','ch20-anim-btn')">⏸ Pause</button>
+      <span>See each animal animated in its habitat</span>
+    </div>
+    <svg id="ch20-diagram" width="100%" viewBox="0 0 680 230" role="img">
+      <title>Animals for transport by terrain</title>
+      <defs>
+        <marker id="arr20" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker>
+      </defs>
+
+      <!-- Horse card -->
+      <g class="float-animated" style="animation-delay:0s">
+        <rect x="8" y="28" width="118" height="168" rx="10" fill="#dbeafe" stroke="#2563eb" stroke-width="1.2"/>
+        <text x="67" y="58" text-anchor="middle" font-size="28">🐴</text>
+        <text x="67" y="80" text-anchor="middle" font-size="13" font-family="sans-serif" font-weight="700" fill="#1e3a8a">Horse</text>
+        <line x1="25" y1="88" x2="109" y2="88" stroke="#bfdbfe" stroke-width="1"/>
+        <text x="67" y="103" text-anchor="middle" font-size="11" font-family="sans-serif" fill="#1d4ed8" font-weight="600">Plains / Towns</text>
+        <text x="67" y="122" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#1e40af">• Riding</text>
+        <text x="67" y="138" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#1e40af">• Tonga (2-wheel)</text>
+        <text x="67" y="154" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#1e40af">• Buggy (4-wheel)</text>
+        <text x="67" y="170" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#1e40af">• Polo sport</text>
+        <text x="67" y="186" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#1e40af">• Weddings</text>
+      </g>
+
+      <!-- Elephant card -->
+      <g class="float-animated" style="animation-delay:.4s">
+        <rect x="136" y="28" width="118" height="168" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.2"/>
+        <text x="195" y="58" text-anchor="middle" font-size="28">🐘</text>
+        <text x="195" y="80" text-anchor="middle" font-size="13" font-family="sans-serif" font-weight="700" fill="#14532d">Elephant</text>
+        <line x1="152" y1="88" x2="238" y2="88" stroke="#bbf7d0" stroke-width="1"/>
+        <text x="195" y="103" text-anchor="middle" font-size="11" font-family="sans-serif" fill="#15803d" font-weight="600">Forests / Temples</text>
+        <text x="195" y="122" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#166534">• Carries heavy logs</text>
+        <text x="195" y="138" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#166534">• Jungle safaris</text>
+        <text x="195" y="154" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#166534">• Temple festivals</text>
+        <text x="195" y="170" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#166534">• Royal transport</text>
+        <text x="195" y="186" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#166534">• Battlefields (old)</text>
+      </g>
+
+      <!-- Camel card -->
+      <g class="float-animated" style="animation-delay:.8s">
+        <rect x="264" y="28" width="118" height="168" rx="10" fill="#fef3c7" stroke="#d97706" stroke-width="1.2"/>
+        <text x="323" y="58" text-anchor="middle" font-size="28">🐪</text>
+        <text x="323" y="80" text-anchor="middle" font-size="13" font-family="sans-serif" font-weight="700" fill="#78350f">Camel</text>
+        <line x1="280" y1="88" x2="366" y2="88" stroke="#fde68a" stroke-width="1"/>
+        <text x="323" y="103" text-anchor="middle" font-size="11" font-family="sans-serif" fill="#b45309" font-weight="600">Deserts</text>
+        <text x="323" y="122" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#92400e">• Desert transport</text>
+        <text x="323" y="138" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#92400e">• Pulls carts</text>
+        <text x="323" y="154" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#92400e">• Spongy hooves</text>
+        <text x="323" y="170" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#92400e">• Walk on sand</text>
+        <text x="323" y="186" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#92400e">• Camel rides</text>
+      </g>
+
+      <!-- Bullock card -->
+      <g class="float-animated" style="animation-delay:1.2s">
+        <rect x="392" y="28" width="118" height="168" rx="10" fill="#fce7f3" stroke="#db2777" stroke-width="1.2"/>
+        <text x="451" y="58" text-anchor="middle" font-size="28">🐂</text>
+        <text x="451" y="80" text-anchor="middle" font-size="13" font-family="sans-serif" font-weight="700" fill="#831843">Bullock</text>
+        <line x1="408" y1="88" x2="494" y2="88" stroke="#fbcfe8" stroke-width="1"/>
+        <text x="451" y="103" text-anchor="middle" font-size="11" font-family="sans-serif" fill="#be185d" font-weight="600">Villages / Towns</text>
+        <text x="451" y="122" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#9d174d">• Bullock cart</text>
+        <text x="451" y="138" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#9d174d">• Carries people</text>
+        <text x="451" y="154" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#9d174d">• Carries goods</text>
+        <text x="451" y="170" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#9d174d">• Oldest Indian</text>
+        <text x="451" y="186" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#9d174d">  transport mode</text>
+      </g>
+
+      <!-- Pony/Yak card -->
+      <g class="float-animated" style="animation-delay:1.6s">
+        <rect x="520" y="28" width="152" height="168" rx="10" fill="#ede9fe" stroke="#7c3aed" stroke-width="1.2"/>
+        <text x="596" y="58" text-anchor="middle" font-size="28">🏔️</text>
+        <text x="596" y="80" text-anchor="middle" font-size="13" font-family="sans-serif" font-weight="700" fill="#4c1d95">Pony / Yak</text>
+        <line x1="536" y1="88" x2="656" y2="88" stroke="#ddd6fe" stroke-width="1"/>
+        <text x="596" y="103" text-anchor="middle" font-size="11" font-family="sans-serif" fill="#6d28d9" font-weight="600">Mountains</text>
+        <text x="596" y="122" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#5b21b6">• Steep terrain</text>
+        <text x="596" y="138" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#5b21b6">• Carry people</text>
+        <text x="596" y="154" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#5b21b6">• Carry supplies</text>
+        <text x="596" y="170" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#5b21b6">• Sherpas use yaks</text>
+        <text x="596" y="186" text-anchor="middle" font-size="10" font-family="sans-serif" fill="#5b21b6">• Ponies: hilly paths</text>
+      </g>
+
+      <text x="340" y="218" text-anchor="middle" font-size="11" font-family="sans-serif" fill="#6b7280">Animals adapt to their terrains — different regions, different animals!</text>
+    </svg>
+  </div>
+
+  <div class="sec-label">Vocabulary Explainer</div>
+  <div style="overflow-x:auto;margin-bottom:1.5rem">
+  <table class="compare-table">
+    <thead><tr><th>Word</th><th>Meaning</th><th>Animal</th></tr></thead>
+    <tbody>
+      <tr><td>🛺 Tonga</td><td>Two-wheeled carriage drawn by a single horse</td><td>🐴 Horse</td></tr>
+      <tr><td>🚗 Buggy</td><td>Four-wheeled luxurious carriage drawn by one or more horses</td><td>🐴 Horse</td></tr>
+      <tr><td>⚔️ Chariot</td><td>Two-wheeled vehicle pulled by horses, used by kings in battles</td><td>🐴 Horse</td></tr>
+      <tr><td>🦶 Hooves</td><td>Hard feet of animals like horses and cows</td><td>🐴🐂 Horse/Bull</td></tr>
+      <tr><td>🧲 Horseshoe</td><td>Iron shoe fitted on hooves to protect them</td><td>🐴 Horse</td></tr>
+      <tr><td>🩺 Veterinarian</td><td>A doctor who treats animals</td><td>All animals</td></tr>
+      <tr><td>🏠 Stable</td><td>A place where horses are kept</td><td>🐴 Horse</td></tr>
+      <tr><td>🌿 Jungle Safari</td><td>A trip through a forest (often on elephants)</td><td>🐘 Elephant</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="sec-label">Animal Care — Step by Step</div>
+  <div class="stepper" id="stepper20"></div>
+
+  <div class="sec-label">Q&A</div>
+  <div class="qa-list" id="qa20"></div>
+
+  <div class="sec-label">MCQ Practice Quiz</div>
+  <div class="mcq-wrap">
+    <div class="score-bar">Score: <span class="score-val" id="sv20">0</span>/<span id="st20">0</span>
+      <div class="progress-track"><div class="progress-fill" id="pf20" style="width:0%"></div></div>
+    </div>
+    <div id="mcq20"></div>
+  </div>
+
+  <div class="sec-label">Match the Animal to its Use</div>
+  <div class="match-game">
+    <div class="match-cols">
+      <div><h4>Animal</h4><div id="match20-left"></div></div>
+      <div><h4>Special Use</h4><div id="match20-right"></div></div>
+    </div>
+    <div class="match-result" id="match20-result"></div>
+    <button class="step-btn" onclick="resetMatch('match20')" style="margin-top:8px">↺ Reset</button>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<script>
+// ─────────────────────────────────────
+// TAB NAVIGATION
+// ─────────────────────────────────────
+function showCh(id, btn){
+  document.querySelectorAll('.chapter').forEach(c=>c.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ─────────────────────────────────────
+// ANIMATION TOGGLE
+// ─────────────────────────────────────
+function toggleAnim(diagId, btnId){
+  const d = document.getElementById(diagId);
+  const b = document.getElementById(btnId);
+  d.classList.toggle('paused');
+  const paused = d.classList.contains('paused');
+  b.textContent = paused ? '▶ Play' : '⏸ Pause';
+  b.classList.toggle('playing', !paused);
+}
+
+// ─────────────────────────────────────
+// HOUSE INFO CARDS
+// ─────────────────────────────────────
+const HOUSE_INFO = {
+  haveli:"<strong>🏯 Haveli</strong> — A large, old house with many rooms, found mainly in Rajasthan and other parts of North India. It has very high ceilings which allow air to flow freely, keeping the house cool naturally (like a natural air conditioner!). Toilets and bathrooms were historically in the backyard. The kitchen was also different — women sat on the floor while cooking, and there were no counters.",
+  kachcha:"<strong>🛖 Kachcha House</strong> — Built from natural materials: mud, straw, and bamboo. The roof is 'thatched' (made of straw). The floor is smeared with a mixture of cow dung and mud. Mostly found in rural (village) areas. Needs repairs every year because during the rainy season, water drips through the thatched roof.",
+  pucca:"<strong>🧱 Pucca House</strong> — Made of bricks, cement, and steel — strong, expensive materials. Very durable and lasts a long time without frequent repairs. Water does not drip from its ceiling. More costly to build than kachcha houses but much safer and more comfortable. Common in both villages and cities.",
+  multistorey:"<strong>🏢 Multi-storey Building</strong> — A tall building with many floors, each floor having many flats. Hundreds of people can live in one building! Common in cities. Often comes with amenities like grocery stores, parks, and gyms inside the complex. Fun fact: Multi-storey buildings existed in Rome over 2,000 years ago!",
+  slum:"<strong>🏚️ Slum</strong> — Areas in cities where poor people build small temporary houses near their workplace using easily available materials like plastic sheets and tin. They cannot afford bricks or cement. Slums often lack clean drinking water and proper toilets. Stagnant water and rubbish cause mosquitoes and flies. The government sometimes helps slum dwellers get better housing.",
+  bungalow:"<strong>🏡 Bungalow</strong> — An independent house, usually with a garden. Only one family lives in a bungalow. They can be small cozy houses or large palatial residences. Common in urban areas and suburbs. They offer more privacy and space compared to flats in multi-storey buildings."
+};
+function showHouseInfo(key){
+  const box = document.getElementById('house-info');
+  box.style.display = 'block';
+  box.innerHTML = HOUSE_INFO[key];
+  box.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ─────────────────────────────────────
+// Q&A DATA
+// ─────────────────────────────────────
+const QA = {
+  ch14:[
+    ["What is a house?","A place where people live with their families. Houses protect us from rain, heat, cold, wind, wild animals, and thieves."],
+    ["What is a haveli?","A large old house with many rooms and very high ceilings. Havelis are mostly found in Rajasthan."],
+    ["Why do havelis have high ceilings?","High ceilings allow air to flow freely, keeping the house cool naturally — like a natural air conditioner."],
+    ["What is a kachcha house?","A house made of mud, straw, and bamboo with a thatched roof. Found mostly in villages."],
+    ["What is a thatched roof?","A roof made of straw. Kachcha houses have thatched roofs which can leak during rains."],
+    ["Why do kachcha houses need repair every year?","Because during the rainy season, water drips through the thatched roof, causing damage."],
+    ["What is a pucca house?","A house made of bricks, cement, and steel. It is strong, durable, and does not need frequent repairs."],
+    ["Which house is stronger — kachcha or pucca?","Pucca house. It is made of strong materials like bricks, cement, and steel."],
+    ["What is a multi-storey building?","A tall building with many floors, each having several flats. Hundreds of people live in one such building."],
+    ["What is a flat?","A home on one floor of a multi-storey building, shared by one family."],
+    ["What is a slum?","An area in a city where poor people live in temporary houses made of plastic sheets and tin."],
+    ["Why do slums lack cleanliness?","Slums lack clean water, proper toilets, and garbage disposal, causing mosquitoes and flies to breed there."],
+    ["Which house is more costly — kachcha or pucca?","Pucca house, because it is made of expensive and strong materials like cement and steel."],
+    ["What types of houses are common in cities?","Pucca houses, bungalows, and multi-storey buildings."],
+    ["What is an unhygienic condition?","An unhealthy condition that may cause diseases. Slums often have unhygienic conditions."]
+  ],
+  ch18:[
+    ["Why is Earth called the Blue Planet?","Because about two-thirds (71%) of Earth's surface is covered with water, making it look blue from space."],
+    ["What is the main source of freshwater on Earth?","Rain is the main source of freshwater."],
+    ["What is groundwater?","Rainwater that seeps through the soil and gets stored underground is called groundwater."],
+    ["How do we draw groundwater?","Using wells, handpumps, and tube wells."],
+    ["What is a spring?","A place in hilly areas where underground water comes up to the surface naturally."],
+    ["What is a pond?","A small body of water surrounded by land. Some ponds dry up in summer."],
+    ["What is a lake?","A large body of water surrounded by land. A lake is bigger than a pond."],
+    ["What is a river?","A large natural flow of water across land. Rivers start from glaciers or springs in mountains."],
+    ["What is a glacier?","A large river of ice on mountains. When snow melts, it becomes river water."],
+    ["What are snow-fed rivers?","Rivers that get water from melting snow in mountains. They have water throughout the year (e.g., Ganga, Yamuna)."],
+    ["What are rain-fed rivers?","Rivers that depend on rainfall. They may dry up in summer (e.g., Godavari, Krishna, Kaveri)."],
+    ["How many oceans are there?","Five — Pacific, Atlantic, Indian, Arctic, and Southern (Antarctic) Oceans."],
+    ["Why is sea water not used for drinking?","Because sea water is salty and cannot be used for drinking or daily activities directly."],
+    ["What is a dam?","A wall built across a river to block water flow. It stores water and generates electricity. It also prevents floods."],
+    ["What is a reservoir?","An artificial lake constructed behind a dam to store the blocked river water."],
+    ["What is a canal?","A channel dug into the ground to carry water from a river or reservoir to fields for irrigation."],
+    ["What is evaporation?","The process by which water changes into water vapour due to heating from the sun."],
+    ["What is condensation?","The process by which water vapour changes back into water due to cooling."],
+    ["What are salt pans?","Areas on the seashore (like in Gujarat) where seawater is collected in dykes, then evaporated to extract salt."]
+  ],
+  ch19:[
+    ["What is water pollution?","Making water dirty and unsafe for use by dumping waste, chemicals, or other harmful substances into water bodies."],
+    ["Why is water precious?","Because all living things need water to survive, and we have very few freshwater resources on Earth."],
+    ["What are pollutants?","Substances like chemicals, sewage, and garbage that pollute water."],
+    ["What is sewage?","Wastewater from homes and cities that flows through drainage systems."],
+    ["What are oil spills?","When huge ships carrying oil spill oil into the sea, polluting the water and harming marine life."],
+    ["What is potable water?","Water that is safe and suitable for drinking. It is purified and clean."],
+    ["Name three diseases caused by polluted water.","Cholera, dysentery, and diarrhoea."],
+    ["How is water purified at a treatment plant?","Step 1: Water is filtered to remove solid impurities. Step 2: It is treated with chemicals to kill germs."],
+    ["Why should drinking water be covered?","To prevent dust particles or insects from falling into it and contaminating it."],
+    ["What is groundwater pollution?","When chemicals and pesticides from farms seep into the ground and contaminate underground water."],
+    ["How do factories pollute water?","By releasing poisonous waste materials and chemicals into rivers and seas."],
+    ["How can we keep drinking water clean at home?","Cover vessels, boil water or use purifiers, don't store water too long, use a long-handled cup to take water."],
+    ["What happens to aquatic animals due to water pollution?","Pollutants kill fish and other aquatic plants and animals, threatening their extinction."],
+    ["What is a water treatment plant?","A facility where water from rivers/lakes is first filtered and then treated with chemicals to make it safe for drinking."]
+  ],
+  ch20:[
+    ["Why are animals used for transport?","Because they can carry people and goods from one place to another, especially where vehicles cannot reach."],
+    ["What is a tonga?","A two-wheeled carriage drawn by a single horse. Common in small towns of North India."],
+    ["What is a buggy?","A four-wheeled luxurious carriage drawn by one or more horses."],
+    ["What is a chariot?","A two-wheeled vehicle pulled by horses, used by kings in battles in ancient times."],
+    ["Which animal is used for transport in deserts?","Camel — it is ideally suited for desert terrain."],
+    ["Why are camels useful in deserts?","They have special spongy (broad) hooves that help them move quickly on sand without sinking."],
+    ["What role do elephants play in temples?","Many big temples in South India maintain elephants, which play an important role during temple festivals."],
+    ["What is a jungle safari?","A trip through a forest, sometimes on elephants, to observe wildlife."],
+    ["What is a bullock cart?","A cart drawn by one or two bullocks. It is one of India's oldest means of transportation."],
+    ["Which animals are used in mountainous regions?","Ponies and yaks are used in mountains to carry people and goods over steep and difficult terrain."],
+    ["What are horseshoes?","Iron shoes fitted on the hooves of horses to protect their feet from wear and damage."],
+    ["Who is a veterinarian?","A doctor who treats animals. Animals need regular check-ups with a veterinarian."],
+    ["What is a stable?","A building where horses are kept, cleaned, and cared for."],
+    ["How should animals be treated?","Animals should be given food, water, rest, exercise, and regular medical care. They have feelings and must be treated kindly."],
+    ["What are hooves?","The hard feet of animals like horses and cows. They protect the animal while walking."]
+  ]
+};
+
+// ─────────────────────────────────────
+// BUILD Q&A
+// ─────────────────────────────────────
+function buildQA(data, id){
+  const el = document.getElementById(id);
+  if(!el) return;
+  el.innerHTML = data.map((qa,i)=>`
+    <div class="qa-item">
+      <div class="qa-q" onclick="toggleQA(this)">
+        <span>Q${i+1}. ${qa[0]}</span>
+        <span class="chev">⌄</span>
+      </div>
+      <div class="qa-a">${qa[1]}</div>
+    </div>`).join('');
+}
+function toggleQA(el){
+  el.nextElementSibling.classList.toggle('open');
+  el.querySelector('.chev').classList.toggle('open');
+}
+
+// ─────────────────────────────────────
+// MCQ DATA
+// ─────────────────────────────────────
+const MCQ = {
+  ch14:[
+    {q:"High ceilings in havelis help to keep rooms ___",opts:["Big","Cool","Hot","Dark"],ans:1},
+    {q:"Roofs made of straw are called ___",opts:["Kachcha roofs","Pucca roofs","Concrete roofs","Thatched roofs"],ans:3},
+    {q:"Houses made of bricks, cement and steel are called ___",opts:["Kachcha houses","Pucca houses","Slums","Huts"],ans:1},
+    {q:"Multi-storey buildings are usually found in ___",opts:["Forests","Villages","Cities","Deserts"],ans:2},
+    {q:"People in slums live in ___ conditions",opts:["Hygienic","Clean","Unhygienic","Luxurious"],ans:2},
+    {q:"Which materials are used to build kachcha houses?",opts:["Bricks and cement","Mud and straw","Steel and glass","Plastic and tin"],ans:1},
+    {q:"An independent house with a garden is called a ___",opts:["Flat","Haveli","Bungalow","Slum"],ans:2},
+    {q:"Which of these does NOT need yearly repair?",opts:["Kachcha house","Thatched house","Pucca house","Mud house"],ans:2}
+  ],
+  ch18:[
+    {q:"Earth is called the ___ Planet",opts:["Green Planet","Blue Planet","Red Planet","White Planet"],ans:1},
+    {q:"The main source of freshwater is ___",opts:["Sea","Ocean","Rain","Canal"],ans:2},
+    {q:"Water stored underground is called ___",opts:["Sea water","Groundwater","River water","Pond water"],ans:1},
+    {q:"A small body of water surrounded by land is called a ___",opts:["Lake","River","Pond","Ocean"],ans:2},
+    {q:"A dam is built to store water and generate ___",opts:["Crops","Electricity","Salt","Oil"],ans:1},
+    {q:"Ganga, Yamuna, Brahmaputra are examples of ___",opts:["Rain-fed rivers","Snow-fed rivers","Polluted rivers","Salt rivers"],ans:1},
+    {q:"Water changes into water vapour due to ___",opts:["Condensation","Evaporation","Precipitation","Filtration"],ans:1},
+    {q:"Water vapour changes back to water due to ___",opts:["Evaporation","Heating","Condensation","Filtration"],ans:2},
+    {q:"A reservoir is ___",opts:["A natural lake","An artificial lake behind a dam","A river","A canal"],ans:1},
+    {q:"How many oceans are there on Earth?",opts:["3","4","5","6"],ans:2}
+  ],
+  ch19:[
+    {q:"Water fit for drinking is called ___",opts:["River water","Potable water","Sea water","Dirty water"],ans:1},
+    {q:"Water pollution causes ___",opts:["Diseases","Good health","Strength","Growth"],ans:0},
+    {q:"Marine life is most harmed by ___",opts:["Rain","Groundwater","Oil spills","Condensation"],ans:2},
+    {q:"At the water treatment plant, water is first filtered to remove ___ impurities",opts:["Chemical","Solid","Liquid","Salty"],ans:1},
+    {q:"Which disease is NOT caused by polluted water?",opts:["Cholera","Dysentery","Diarrhoea","Malaria"],ans:3},
+    {q:"Untreated ___ let into rivers is a major cause of water pollution",opts:["Rain","Sewage","Air","Food"],ans:1},
+    {q:"After filtering, water is treated with ___ to kill germs",opts:["Salt","Sugar","Chemicals","Mud"],ans:2},
+    {q:"What should we do to keep drinking water clean at home?",opts:["Leave it open","Boil it or use a purifier","Add food colour","Add sugar"],ans:1}
+  ],
+  ch20:[
+    {q:"A tonga is pulled by ___",opts:["Camel","Yak","Horse","Elephant"],ans:2},
+    {q:"Camels are used for transport in ___",opts:["Forests","Deserts","Oceans","Mountains"],ans:1},
+    {q:"Elephants are mainly used to carry ___",opts:["Books","Heavy logs","Clothes","Water"],ans:1},
+    {q:"Ponies and yaks are used mainly in ___",opts:["Desert","Cities","Mountains","Oceans"],ans:2},
+    {q:"A doctor who treats animals is called a ___",opts:["Teacher","Nurse","Veterinarian","Farmer"],ans:2},
+    {q:"A buggy is a ___ carriage drawn by horses",opts:["Two-wheeled, simple","Four-wheeled, luxurious","Six-wheeled, heavy","One-wheeled, small"],ans:1},
+    {q:"What helps camels walk on sand?",opts:["Sharp hooves","Spongy broad hooves","Wheels","Fins"],ans:1},
+    {q:"Bullock cart is one of India's ___ means of transport",opts:["Newest","Fastest","Oldest","Most expensive"],ans:2}
+  ]
+};
+
+// ─────────────────────────────────────
+// BUILD MCQ
+// ─────────────────────────────────────
+const scores = {ch14:0,ch15:0,ch18:0,ch19:0,ch20:0};
+const answered = {ch14:0,ch15:0,ch18:0,ch19:0,ch20:0};
+
+function buildMCQ(data, id, svId, stId, pfId, ch){
+  const el = document.getElementById(id);
+  if(!el) return;
+  document.getElementById(stId).textContent = data.length;
+  el.innerHTML = data.map((item,qi)=>`
+    <div class="mcq-item">
+      <div class="mcq-q">Q${qi+1}. ${item.q}</div>
+      <div class="mcq-opts">${item.opts.map((o,oi)=>`
+        <button class="mcq-opt" onclick="checkAns(this,${oi},${item.ans},'${ch}','${svId}','${pfId}',${data.length})">
+          <span class="opt-letter">${String.fromCharCode(65+oi)}</span>${o}
+        </button>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function checkAns(btn, chosen, correct, ch, svId, pfId, total){
+  const opts = btn.parentElement.querySelectorAll('.mcq-opt');
+  opts.forEach(o=>o.disabled=true);
+  answered[ch]++;
+  if(chosen===correct){
+    btn.classList.add('correct');
+    scores[ch]++;
+    document.getElementById(svId).textContent = scores[ch];
+  } else {
+    btn.classList.add('wrong');
+    opts[correct].classList.add('correct');
+  }
+  document.getElementById(pfId).style.width = Math.round((answered[ch]/total)*100)+'%';
+}
+
+// ─────────────────────────────────────
+// KEYWORDS
+// ─────────────────────────────────────
+const KEYWORDS = {
+  kw14: [
+    {w:'Haveli',c:'#dbeafe',tc:'#1e3a8a',d:'Large old house'},
+    {w:'Kachcha',c:'#fef9c3',tc:'#713f12',d:'Mud & straw house'},
+    {w:'Pucca',c:'#dcfce7',tc:'#14532d',d:'Brick & cement house'},
+    {w:'Thatched roof',c:'#fef3c7',tc:'#78350f',d:'Roof made of straw'},
+    {w:'Multi-storey',c:'#f3e8ff',tc:'#4c1d95',d:'Tall building with flats'},
+    {w:'Slum',c:'#fee2e2',tc:'#7f1d1d',d:'Temporary houses in cities'},
+    {w:'Rural',c:'#ecfccb',tc:'#365314',d:'Of a village'},
+    {w:'Urban',c:'#e0f2fe',tc:'#0c4a6e',d:'Of a city or town'},
+    {w:'Unhygienic',c:'#fce7f3',tc:'#831843',d:'Causes diseases'},
+    {w:'Bungalow',c:'#f0fdf4',tc:'#14532d',d:'Independent house with garden'}
+  ]
+};
+function buildKeywords(data, id){
+  const el = document.getElementById(id);
+  if(!el||!data) return;
+  el.innerHTML = data.map(k=>`
+    <span class="kw" style="background:${k.c};color:${k.tc};border-color:${k.c}" title="${k.d}">${k.w}</span>`).join('');
+}
+
+// ─────────────────────────────────────
+// STEPPERS
+// ─────────────────────────────────────
+const STEPPERS = {
+  stepper18: [
+    {t:'Rain ☁', b:'Most freshwater on Earth comes from rain. Rainfall varies by place and season. Farmers depend on rain to irrigate their fields.'},
+    {t:'Groundwater 🌍', b:'Much rainwater seeps into the ground and is stored as groundwater. Wells, handpumps, and tube wells draw this water. In hilly areas, it comes up as springs.'},
+    {t:'Inland Water Bodies 🔵', b:'Ponds (small, surrounded by land), Lakes (large, surrounded by land), and Rivers (natural flow from mountains) are inland water sources.'},
+    {t:'Snow-fed vs Rain-fed Rivers 🏔', b:'Snow-fed rivers (Ganga, Yamuna): fed by melting glaciers in Himalayas — water all year. Rain-fed rivers (Godavari, Krishna, Kaveri): fed by monsoon rains — may dry in summer.'},
+    {t:'Oceans & Seas 🌊', b:'There are 5 oceans: Pacific, Atlantic, Indian, Arctic, Southern. Sea water is salty and cannot be used for drinking or daily activities directly.'},
+    {t:'Dams, Reservoirs & Canals 🏗', b:'Dams block rivers to store water and generate electricity. Reservoirs are artificial lakes behind dams. Canals carry water to agricultural fields for irrigation.'},
+    {t:'Evaporation & Condensation 🔄', b:'Evaporation: sun heats water → it turns into water vapour (gas). Condensation: water vapour cools → it turns back into water droplets, forming clouds → then rain. This is the water cycle!'}
+  ],
+  stepper20: [
+    {t:'Give Food & Water 🥗', b:'Animals must be given adequate food and clean water regularly. Just like humans, animals need proper nutrition to stay healthy and strong.'},
+    {t:'Ensure Rest & Exercise 🛏', b:'Animals need enough rest after working, along with regular exercise. Overworking animals is cruel and harmful to their health.'},
+    {t:'Keep Stable Clean 🧹', b:'The stable (where horses live) must be kept neat and clean. Dirty surroundings can cause disease and discomfort to animals.'},
+    {t:'Give a Bath 🚿', b:'Animals should be given regular baths to maintain cleanliness, remove parasites, and keep their skin and coat healthy.'},
+    {t:'Fit Horseshoes 🧲', b:'Iron horseshoes are fitted on horses\' hooves to protect them from wear and damage, especially when walking on hard surfaces.'},
+    {t:'Visit the Veterinarian 🩺', b:'Animals need regular check-ups with a veterinarian (animal doctor) to prevent disease and get timely treatment. Like humans, they need vaccinations and medical care.'},
+    {t:'Treat Animals Kindly 💚', b:'Animals have feelings — they feel hurt and sad when mistreated. Being kind to animals is our moral responsibility. Never overload, beat, or starve working animals.'}
+  ]
+};
+
+function buildStepper(data, id){
+  const el = document.getElementById(id);
+  if(!el||!data) return;
+  const dots = data.map((_,i)=>`<div class="step-dot ${i===0?'active':''}" onclick="goStep('${id}',${i})"></div>`).join('');
+  const panels = data.map((s,i)=>`
+    <div class="step-panel ${i===0?'active':''}" id="${id}-p${i}">
+      <div class="step-title">${s.t}</div>
+      <div class="step-body">${s.b}</div>
+    </div>`).join('');
+  el.innerHTML = `
+    <div class="step-dots" id="${id}-dots">${dots}</div>
+    ${panels}
+    <div class="step-nav">
+      <button class="step-btn" onclick="stepNav('${id}',-1,${data.length})">← Prev</button>
+      <span id="${id}-counter" style="font-size:12px;color:#6b7280;flex:1;text-align:center">1 / ${data.length}</span>
+      <button class="step-btn primary" onclick="stepNav('${id}',1,${data.length})">Next →</button>
+    </div>`;
+  el._cur = 0; el._len = data.length;
+}
+
+function goStep(id, n){
+  const el = document.getElementById(id);
+  const cur = el._cur;
+  document.getElementById(`${id}-p${cur}`).classList.remove('active');
+  el.querySelectorAll('.step-dot')[cur].classList.remove('active');
+  if(n>cur) el.querySelectorAll('.step-dot')[cur].classList.add('done');
+  el._cur = n;
+  document.getElementById(`${id}-p${n}`).classList.add('active');
+  el.querySelectorAll('.step-dot')[n].classList.add('active');
+  document.getElementById(`${id}-counter`).textContent = `${n+1} / ${el._len}`;
+}
+
+function stepNav(id, dir, len){
+  const el = document.getElementById(id);
+  const next = Math.max(0, Math.min(len-1, el._cur + dir));
+  if(next !== el._cur) goStep(id, next);
+}
+
+// ─────────────────────────────────────
+// PURIFICATION FLOW
+// ─────────────────────────────────────
+const FLOW19 = [
+  {n:'1',t:'Collect',s:'Rivers, lakes, reservoirs'},
+  {n:'2',t:'Transport',s:'Channels to treatment plant'},
+  {n:'3',t:'Filter',s:'Remove solid impurities'},
+  {n:'4',t:'Treat',s:'Chemicals kill germs'},
+  {n:'5',t:'Distribute',s:'Pumped to homes via pipes'}
+];
+function buildFlow(){
+  const el = document.getElementById('flow19');
+  if(!el) return;
+  el.innerHTML = FLOW19.map((s,i)=>`
+    ${i>0?'<div class="flow-arrow">→</div>':''}
+    <div class="flow-step">
+      <div class="num">${s.n}</div>
+      <div class="fs-title">${s.t}</div>
+      <div class="fs-sub">${s.s}</div>
+    </div>`).join('');
+}
+
+// ─────────────────────────────────────
+// MATCH GAME
+// ─────────────────────────────────────
+const MATCHES = {
+  match14:{
+    pairs:[
+      {l:'🏯 Haveli', r:'Large old house with high ceilings', id:'a'},
+      {l:'🛖 Kachcha', r:'Made of mud and straw', id:'b'},
+      {l:'🧱 Pucca', r:'Made of bricks, cement, steel', id:'c'},
+      {l:'🏢 Multi-storey', r:'Has many floors and flats', id:'d'},
+      {l:'🏚️ Slum', r:'Temporary houses of plastic & tin', id:'e'}
+    ]
+  },
+  match20:{
+    pairs:[
+      {l:'🐴 Horse', r:'Pulls a tonga or buggy', id:'a'},
+      {l:'🐘 Elephant', r:'Carries heavy logs in forests', id:'b'},
+      {l:'🐪 Camel', r:'Desert transport with spongy hooves', id:'c'},
+      {l:'🐂 Bullock', r:'Pulls India\'s oldest cart', id:'d'},
+      {l:'🦬 Yak', r:'Used in mountainous regions', id:'e'}
+    ]
+  }
+};
+
+let matchState = {};
+function buildMatch(matchId){
+  const data = MATCHES[matchId];
+  const pairs = [...data.pairs].sort(()=>Math.random()-.5);
+  const rightShuffle = [...pairs].sort(()=>Math.random()-.5);
+  matchState[matchId] = {pairs, selected:null, score:0, total:pairs.length, matched:[]};
+  document.getElementById(matchId+'-left').innerHTML = pairs.map(p=>`<div class="match-item" id="${matchId}-l-${p.id}" onclick="selectMatch('${matchId}','left','${p.id}')">${p.l}</div>`).join('');
+  document.getElementById(matchId+'-right').innerHTML = rightShuffle.map(p=>`<div class="match-item" id="${matchId}-r-${p.id}" onclick="selectMatch('${matchId}','right','${p.id}')">${p.r}</div>`).join('');
+  document.getElementById(matchId+'-result').textContent = '';
+}
+
+function selectMatch(matchId, side, id){
+  const st = matchState[matchId];
+  if(st.matched.includes(id)) return;
+  if(!st.selected){
+    st.selected = {side, id};
+    document.getElementById(`${matchId}-${side[0]}-${id}`).classList.add('selected');
+  } else {
+    const prev = st.selected;
+    if(prev.side === side){ // clicked same side, switch
+      document.getElementById(`${matchId}-${prev.side[0]}-${prev.id}`).classList.remove('selected');
+      st.selected = {side, id};
+      document.getElementById(`${matchId}-${side[0]}-${id}`).classList.add('selected');
+      return;
+    }
+    // Check match
+    document.getElementById(`${matchId}-${prev.side[0]}-${prev.id}`).classList.remove('selected');
+    document.getElementById(`${matchId}-${side[0]}-${id}`).classList.remove('selected');
+    const leftId = prev.side==='left'?prev.id:id;
+    const rightId = prev.side==='right'?prev.id:id;
+    if(leftId===rightId){
+      // Correct!
+      document.getElementById(`${matchId}-l-${leftId}`).classList.add('matched');
+      document.getElementById(`${matchId}-r-${rightId}`).classList.add('matched');
+      st.matched.push(leftId);
+      st.score++;
+      const resEl = document.getElementById(matchId+'-result');
+      if(st.score===st.total){
+        resEl.textContent = `🎉 Perfect! All ${st.total} matched correctly!`;
+        resEl.style.color='#16a34a';
+      } else {
+        resEl.textContent = `✅ Correct! ${st.score}/${st.total} matched.`;
+        resEl.style.color='#16a34a';
+      }
+    } else {
+      // Wrong flash
+      const lEl = document.getElementById(`${matchId}-l-${leftId}`);
+      const rEl = document.getElementById(`${matchId}-r-${rightId}`);
+      lEl.classList.add('wrong-flash'); rEl.classList.add('wrong-flash');
+      setTimeout(()=>{lEl.classList.remove('wrong-flash');rEl.classList.remove('wrong-flash')},400);
+      const resEl = document.getElementById(matchId+'-result');
+      resEl.textContent = `❌ Not a match. Try again!`;
+      resEl.style.color='#dc2626';
+    }
+    st.selected = null;
+  }
+}
+
+function resetMatch(matchId){
+  buildMatch(matchId);
+}
+
+// ─────────────────────────────────────
+// INITIALISE
+// ─────────────────────────────────────
+window.addEventListener('DOMContentLoaded', ()=>{
+  // Q&As
+  buildQA(QA.ch14,'qa14');
+  buildQA(QA.ch18,'qa18');
+  buildQA(QA.ch19,'qa19');
+  buildQA(QA.ch20,'qa20');
+  // MCQs
+  buildMCQ(MCQ.ch14,'mcq14','sv14','st14','pf14','ch14');
+  buildMCQ(MCQ.ch18,'mcq18','sv18','st18','pf18','ch18');
+  buildMCQ(MCQ.ch19,'mcq19','sv19','st19','pf19','ch19');
+  buildMCQ(MCQ.ch20,'mcq20','sv20','st20','pf20','ch20');
+  // Steppers
+  buildStepper(STEPPERS.stepper18,'stepper18');
+  buildStepper(STEPPERS.stepper20,'stepper20');
+  // Flow
+  buildFlow();
+  // Keywords
+  buildKeywords(KEYWORDS.kw14,'kw14');
+  // Match games
+  buildMatch('match14');
+  buildMatch('match20');
+});
+</script>
+</body>
+</html>
